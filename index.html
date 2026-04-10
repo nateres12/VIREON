@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VIREON Healthcare Limited, Advancing Health, Delivering Trust</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap&font-display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            azure: {
+              950: '#03090f',
+              900: '#061121',
+              800: '#0a1a2e',
+              700: '#0d2341',
+              600: '#133358',
+              500: '#1a4a6b',
+              400: '#1e6678',
+              300: '#2a8fa8',
+              200: '#5bb5cc',
+              100: '#a8d8e6',
+              50:  '#e8f5fa',
+            },
+            cream: '#f4f7fa',
+          },
+          fontFamily: {
+            display: ['Playfair Display', 'Georgia', 'serif'],
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          },
+        }
+      }
+    };
+  </script>
+  <style>
+    html { scroll-behavior: smooth; overflow-x: hidden; }
+    body { overflow-x: hidden; max-width: 100%; }
+
+    /* Noise texture overlay */
+    .noise::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Gradient mesh background for hero */
+    .hero-bg {
+      background:
+        radial-gradient(ellipse 80% 60% at 70% 40%, rgba(42,143,168,0.1) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 80% at 10% 80%, rgba(26,74,107,0.07) 0%, transparent 55%),
+        radial-gradient(ellipse 100% 100% at 50% 50%, #ffffff 60%, #e8f5fa 100%);
+    }
+
+    /* Animated glow pulse */
+    @keyframes glow-pulse {
+      0%, 100% { opacity: 0.6; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.05); }
+    }
+    .glow-orb {
+      animation: glow-pulse 6s ease-in-out infinite;
+    }
+
+    /* Card hover lift */
+    .card-lift {
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+    }
+    .card-lift:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 24px 48px rgba(6,17,33,0.12), 0 8px 16px rgba(30,102,120,0.1);
+    }
+
+    /* Nav link underline */
+    .nav-link {
+      position: relative;
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 1px;
+      background: #2a8fa8;
+      transition: width 0.25s ease;
+    }
+    .nav-link:hover::after { width: 100%; }
+
+
+    /* Accordion */
+    .accordion-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .accordion-content.open {
+      max-height: 400px;
+    }
+    .accordion-icon {
+      transition: transform 0.3s ease;
+    }
+    .accordion-icon.open {
+      transform: rotate(45deg);
+    }
+
+    /* Form focus */
+    .form-input:focus {
+      outline: none;
+      border-color: #2a8fa8;
+      box-shadow: 0 0 0 3px rgba(42,143,168,0.15);
+    }
+
+    /* CTA button */
+    .btn-primary {
+      background: linear-gradient(135deg, #1e6678 0%, #1a4a6b 100%);
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease, opacity 0.2s ease;
+      box-shadow: 0 4px 16px rgba(30,102,120,0.35), 0 1px 4px rgba(3,9,15,0.4);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(30,102,120,0.45), 0 2px 8px rgba(3,9,15,0.4);
+      opacity: 0.95;
+    }
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+    .btn-primary:focus-visible {
+      outline: 2px solid #2a8fa8;
+      outline-offset: 3px;
+    }
+
+    .btn-outline {
+      border: 1.5px solid rgba(26,74,107,0.45);
+      color: #1a4a6b;
+      transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease, transform 0.2s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .btn-outline:hover {
+      border-color: #1e6678;
+      background: rgba(42,143,168,0.08);
+      color: #061121;
+      transform: translateY(-1px);
+    }
+    .btn-outline:focus-visible {
+      outline: 2px solid #2a8fa8;
+      outline-offset: 3px;
+    }
+
+    /* Section divider */
+    .section-divider {
+      border: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(42,143,168,0.25), transparent);
+    }
+
+    /* Stat counter */
+    .stat-card {
+      border: 1px solid rgba(42,143,168,0.2);
+      background: #ffffff;
+      box-shadow: 0 2px 16px rgba(6,17,33,0.06), 0 1px 4px rgba(6,17,33,0.04);
+    }
+
+
+    /* Shared icon container gradient */
+    .icon-gradient { background: linear-gradient(135deg, #1e6678, #1a4a6b); }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #e8f5fa; }
+    ::-webkit-scrollbar-thumb { background: #2a8fa8; border-radius: 3px; }
+
+    /* Mobile nav */
+    #mobile-menu { transition: opacity 0.25s ease, transform 0.25s ease; }
+    #mobile-menu.hidden { opacity: 0; pointer-events: none; transform: translateY(-8px); }
+    #mobile-menu:not(.hidden) { opacity: 1; transform: translateY(0); }
+  </style>
+</head>
+<body class="bg-white text-azure-900 font-sans antialiased">
+
+  <!-- ===================== NAVIGATION ===================== -->
+  <header id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-colors duration-300">
+    <nav class="max-w-7xl mx-auto px-6 lg:px-8 flex items-center justify-between" style="height:80px;">
+      <!-- Logo -->
+      <a href="#" class="flex items-center gap-3 flex-shrink-0">
+        <img src="brand_assets/IMG_0469.png" alt="VIREON Healthcare Limited" class="h-16 w-auto" />
+      </a>
+
+      <!-- Desktop Nav -->
+      <div class="hidden md:flex items-center gap-8">
+        <a href="#drugs" class="nav-link text-sm font-medium text-azure-700 hover:text-azure-900 transition-colors duration-200">Our Portfolio</a>
+        <a href="#about" class="nav-link text-sm font-medium text-azure-700 hover:text-azure-900 transition-colors duration-200">About Us</a>
+        <a href="#providers" class="nav-link text-sm font-medium text-azure-700 hover:text-azure-900 transition-colors duration-200">For Providers</a>
+        <a href="#patients" class="nav-link text-sm font-medium text-azure-700 hover:text-azure-900 transition-colors duration-200">Patient Resources</a>
+        <a href="#contact" class="nav-link text-sm font-medium text-azure-700 hover:text-azure-900 transition-colors duration-200">Contact</a>
+      </div>
+
+      <!-- Desktop CTA -->
+      <div class="hidden md:flex items-center gap-3">
+        <a href="#contact" class="btn-outline text-sm font-semibold px-4 py-2 rounded-lg">Partner With Us</a>
+        <a href="#drugs" class="btn-primary text-sm font-semibold px-5 py-2 rounded-lg text-white">Our Portfolio</a>
+      </div>
+
+      <!-- Mobile burger -->
+      <button id="burger" class="md:hidden p-2 rounded-lg text-azure-600 hover:text-azure-900 hover:bg-azure-50 transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-azure-400" aria-label="Open menu">
+        <svg id="burger-icon" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+      </button>
+    </nav>
+
+    <!-- Mobile menu -->
+    <div id="mobile-menu" class="hidden md:hidden bg-white/97 backdrop-blur-md border-t border-azure-200/60 px-6 py-5 space-y-4">
+      <a href="#drugs" class="block text-sm font-medium text-azure-700 hover:text-azure-900 py-1 transition-colors duration-200">Our Portfolio</a>
+      <a href="#about" class="block text-sm font-medium text-azure-700 hover:text-azure-900 py-1 transition-colors duration-200">About Us</a>
+      <a href="#providers" class="block text-sm font-medium text-azure-700 hover:text-azure-900 py-1 transition-colors duration-200">For Providers</a>
+      <a href="#patients" class="block text-sm font-medium text-azure-700 hover:text-azure-900 py-1 transition-colors duration-200">Patient Resources</a>
+      <a href="#contact" class="block text-sm font-medium text-azure-700 hover:text-azure-900 py-1 transition-colors duration-200">Contact</a>
+      <div class="pt-2 flex flex-col gap-3">
+        <a href="#contact" class="btn-outline text-center text-sm font-semibold px-4 py-2.5 rounded-lg">Partner With Us</a>
+        <a href="#drugs" class="btn-primary text-center text-sm font-semibold px-5 py-2.5 rounded-lg text-white">Our Portfolio</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===================== HERO ===================== -->
+  <section class="hero-bg noise relative min-h-screen flex flex-col justify-center overflow-hidden">
+    <!-- Glow orbs -->
+    <div class="glow-orb absolute top-1/4 right-1/4 w-96 h-96 rounded-full bg-azure-300/15 blur-3xl pointer-events-none"></div>
+    <div class="glow-orb absolute bottom-1/3 left-1/6 w-64 h-64 rounded-full bg-azure-200/20 blur-3xl pointer-events-none" style="animation-delay:3s;"></div>
+    <img src="brand_assets/IMG_0468.png" alt="" aria-hidden="true" loading="lazy" class="pointer-events-none select-none absolute right-8 bottom-16 w-72 opacity-[0.07]" />
+
+    <div class="relative z-10 max-w-7xl mx-auto px-6 lg:px-8 py-32 pt-40 grid lg:grid-cols-2 gap-16 items-center">
+      <!-- Left: Text -->
+      <div>
+        <div class="inline-flex items-center gap-2 mb-6 px-3 py-1.5 rounded-full border border-azure-400/40 bg-azure-50 backdrop-blur-sm">
+          <span class="w-1.5 h-1.5 rounded-full bg-azure-400 animate-pulse"></span>
+          <span class="text-xs font-semibold tracking-widest text-azure-600 uppercase">Novel Pharmaceutical Distribution</span>
+        </div>
+
+        <h1 class="font-display text-3xl sm:text-5xl lg:text-6xl xl:text-7xl font-700 leading-tight tracking-tight text-azure-900 mb-6" style="letter-spacing:-0.03em; line-height:1.08; font-weight:700;">
+          Bringing Breakthrough
+          <span class="block" style="background: linear-gradient(90deg, #1a4a6b 0%, #1e6678 40%, #2a8fa8 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Medicines</span>
+          to Africa
+        </h1>
+
+        <p class="text-azure-700 text-lg leading-relaxed mb-10 max-w-xl" style="line-height:1.75;">
+          VIREON Healthcare Limited imports and distributes novel, niche, and life-changing drugs across the African market, making cutting-edge treatments accessible to patients who need them most.
+        </p>
+
+        <div class="flex flex-wrap gap-4">
+          <a href="#drugs" class="btn-primary inline-flex items-center gap-2 px-7 py-3.5 rounded-xl text-white font-semibold text-base">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path stroke-linecap="round" d="M21 21l-4.35-4.35"/></svg>
+            View Our Portfolio
+          </a>
+          <a href="#contact" class="btn-outline inline-flex items-center gap-2 px-7 py-3.5 rounded-xl font-semibold text-base">
+            Make an Inquiry
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+          </a>
+        </div>
+
+        <!-- Trust signals -->
+        <div class="mt-12 flex flex-wrap gap-6">
+          <div class="flex items-center gap-2 text-sm text-azure-600">
+            <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20" class="text-azure-400 flex-shrink-0"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+            Verified Global Partners
+          </div>
+          <div class="flex items-center gap-2 text-sm text-azure-600">
+            <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20" class="text-azure-400 flex-shrink-0"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+            Pan-African Distribution
+          </div>
+          <div class="flex items-center gap-2 text-sm text-azure-600">
+            <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20" class="text-azure-400 flex-shrink-0"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+            Patient-Centred Mission
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Feature cards -->
+      <div class="hidden lg:grid grid-cols-2 gap-4">
+        <div class="stat-card rounded-2xl p-5 card-lift col-span-2">
+          <div class="flex items-center gap-3 mb-3">
+            <div class="icon-gradient w-9 h-9 rounded-lg flex items-center justify-center">
+              <svg width="18" height="18" fill="none" stroke="white" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <span class="font-semibold text-sm text-azure-900">Our Mission</span>
+          </div>
+          <p class="text-azure-700 text-sm leading-relaxed">Importing and distributing novel, niche, and life-changing therapies across Africa, bridging the gap between global pharmaceutical innovation and the patients who need it most.</p>
+        </div>
+
+        <div class="stat-card rounded-2xl p-5 card-lift">
+          <p class="text-3xl font-display font-bold text-azure-900 mb-1">Pan-Africa</p>
+          <p class="text-sm text-azure-600">Distribution network</p>
+        </div>
+        <div class="stat-card rounded-2xl p-5 card-lift">
+          <p class="text-3xl font-display font-bold text-azure-900 mb-1">48 hrs</p>
+          <p class="text-sm text-azure-600">Inquiry response time</p>
+        </div>
+        <div class="stat-card rounded-2xl p-5 card-lift">
+          <p class="text-3xl font-display font-bold text-azure-900 mb-1">Nigeria</p>
+          <p class="text-sm text-azure-600">Headquartered &amp; operating</p>
+        </div>
+        <div class="stat-card rounded-2xl p-5 card-lift">
+          <p class="text-3xl font-display font-bold text-azure-900 mb-1">Novel</p>
+          <p class="text-sm text-azure-600">Therapies only</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom fade -->
+    <div class="absolute bottom-0 left-0 right-0 h-24 pointer-events-none" style="background: linear-gradient(to bottom, transparent, #ffffff);"></div>
+  </section>
+
+  <!-- ===================== PORTFOLIO ===================== -->
+  <section id="drugs" class="py-32 bg-azure-50 relative overflow-hidden">
+    <!-- V-leaf watermark, centred -->
+    <img src="brand_assets/IMG_0468.png" alt="" aria-hidden="true" loading="lazy" class="pointer-events-none select-none absolute right-1/2 translate-x-1/2 top-1/2 -translate-y-1/2 w-72 md:w-96 lg:w-[420px] opacity-[0.07]" />
+
+    <div class="relative z-10 max-w-4xl mx-auto px-6 lg:px-8 text-center">
+      <span class="text-xs font-semibold tracking-widest uppercase text-azure-500 mb-4 block">Pharmaceutical Portfolio</span>
+      <h2 class="font-display text-2xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-azure-900 mb-6" style="letter-spacing:-0.03em; line-height:1.1;">
+        Good Medicines<br/>Take Time to List.
+      </h2>
+      <p class="text-azure-700 text-xl max-w-2xl mx-auto mb-4" style="line-height:1.75;">
+        Our portfolio is being assembled with the same rigour we apply to every therapy we source, deliberately, not hastily.
+      </p>
+      <p class="text-azure-500 text-base max-w-xl mx-auto mb-12" style="line-height:1.75;">
+        The medicines are lined up. The paperwork is being properly done. In the meantime, if you're waiting on something specific, just ask.
+      </p>
+
+      <!-- Therapeutic area tags, what's coming -->
+      <div class="flex flex-wrap justify-center gap-3 mb-14">
+        <span class="px-4 py-2 rounded-full border border-azure-300/60 bg-white text-azure-600 text-sm font-medium">Metabolic &amp; Endocrinology</span>
+        <span class="px-4 py-2 rounded-full border border-azure-300/60 bg-white text-azure-600 text-sm font-medium">Hematology</span>
+        <span class="px-4 py-2 rounded-full border border-azure-300/60 bg-white text-azure-600 text-sm font-medium">Oncology</span>
+        <span class="px-4 py-2 rounded-full border border-azure-300/60 bg-white text-azure-600 text-sm font-medium">Infectious Disease</span>
+        <span class="px-4 py-2 rounded-full border border-azure-300/60 bg-white text-azure-600 text-sm font-medium">Rare &amp; Orphan Diseases</span>
+        <span class="px-4 py-2 rounded-full border border-azure-300/60 bg-white text-azure-600 text-sm font-medium">Cardiology</span>
+      </div>
+
+      <a href="#contact" class="btn-primary inline-flex items-center gap-2 px-8 py-4 rounded-xl text-white font-semibold text-base">
+        Inquire Directly
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+      </a>
+    </div>
+  </section>
+
+  <hr class="section-divider" />
+
+  <!-- ===================== ABOUT & CREDIBILITY ===================== -->
+  <section id="about" class="py-24 bg-white relative overflow-hidden">
+    <img src="brand_assets/IMG_0468.png" alt="" aria-hidden="true" loading="lazy" class="pointer-events-none select-none absolute left-0 bottom-0 w-80 opacity-[0.07]" />
+    <div class="relative z-10 max-w-7xl mx-auto px-6 lg:px-8">
+      <div class="grid lg:grid-cols-2 gap-16 items-center">
+        <!-- Left -->
+        <div>
+          <span class="text-xs font-semibold tracking-widest uppercase text-azure-500 mb-3 block">About VIREON</span>
+          <h2 class="font-display text-2xl sm:text-3xl lg:text-5xl font-bold text-azure-900 mb-6" style="letter-spacing:-0.02em; line-height:1.15;">Bridging the Gap Between Innovation and Access</h2>
+          <p class="text-azure-700 text-base leading-relaxed mb-6" style="line-height:1.75;">VIREON Healthcare Limited was founded on a single conviction: that patients in Africa deserve the same access to breakthrough medicines as anywhere else in the world. We source, import, and distribute novel and niche pharmaceutical products, navigating regulatory complexities so that healthcare providers can focus on care.</p>
+          <p class="text-azure-700 text-base leading-relaxed mb-8" style="line-height:1.75;">We work directly with global manufacturers and authorised distributors to source breakthrough therapies, navigating complex import processes so healthcare providers and patients don't have to.</p>
+
+          <div class="flex flex-wrap gap-4">
+            <a href="#contact" class="btn-primary inline-flex items-center gap-2 px-6 py-3 rounded-xl text-white font-semibold text-sm">Partner With Us</a>
+            <a href="#providers" class="btn-outline inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm">For Healthcare Providers</a>
+          </div>
+        </div>
+
+        <!-- Right: Credential cards -->
+        <div class="grid grid-cols-2 gap-4">
+          <div class="stat-card rounded-2xl p-5 card-lift">
+            <div class="icon-gradient w-10 h-10 rounded-xl mb-4 flex items-center justify-center">
+              <svg width="20" height="20" fill="none" stroke="white" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+            </div>
+            <h4 class="font-semibold text-azure-900 text-sm mb-1">Regulatory Navigation</h4>
+            <p class="text-azure-600 text-xs leading-relaxed">We handle the complexity of pharmaceutical import regulations so providers can focus on patient care.</p>
+          </div>
+
+          <div class="stat-card rounded-2xl p-5 card-lift">
+            <div class="icon-gradient w-10 h-10 rounded-xl mb-4 flex items-center justify-center">
+              <svg width="20" height="20" fill="none" stroke="white" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9"/></svg>
+            </div>
+            <h4 class="font-semibold text-azure-900 text-sm mb-1">Global Manufacturer Partnerships</h4>
+            <p class="text-azure-600 text-xs leading-relaxed">Direct agreements with leading biotech and pharmaceutical companies in the US, EU, and Asia-Pacific.</p>
+          </div>
+
+          <div class="stat-card rounded-2xl p-5 card-lift">
+            <div class="icon-gradient w-10 h-10 rounded-xl mb-4 flex items-center justify-center">
+              <svg width="20" height="20" fill="none" stroke="white" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+            </div>
+            <h4 class="font-semibold text-azure-900 text-sm mb-1">End-to-End Supply</h4>
+            <p class="text-azure-600 text-xs leading-relaxed">From sourcing to delivery, we manage the full import and distribution pipeline for every therapy we carry.</p>
+          </div>
+
+          <div class="stat-card rounded-2xl p-5 card-lift">
+            <div class="icon-gradient w-10 h-10 rounded-xl mb-4 flex items-center justify-center">
+              <svg width="20" height="20" fill="none" stroke="white" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            </div>
+            <h4 class="font-semibold text-azure-900 text-sm mb-1">Healthcare Provider Network</h4>
+            <p class="text-azure-600 text-xs leading-relaxed">Established relationships with hospitals, specialist clinics, and pharmacies across Nigeria and beyond.</p>
+          </div>
+
+          <div class="stat-card rounded-2xl p-5 card-lift col-span-2">
+            <div class="flex items-center gap-3">
+              <div class="icon-gradient w-10 h-10 rounded-xl flex-shrink-0 flex items-center justify-center">
+                <svg width="20" height="20" fill="none" stroke="white" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+              </div>
+              <div>
+                <h4 class="font-semibold text-azure-900 text-sm mb-0.5">Patient-Centred Mission</h4>
+                <p class="text-azure-600 text-xs leading-relaxed">We keep patients at the core of every decision, from which drugs we source to how we price and communicate availability.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="section-divider" />
+
+  <!-- ===================== FOR HEALTHCARE PROVIDERS ===================== -->
+  <section id="providers" class="py-24 bg-azure-50 relative overflow-hidden">
+    <div class="absolute inset-0 pointer-events-none" style="background: radial-gradient(ellipse 80% 60% at 20% 50%, rgba(42,143,168,0.06) 0%, transparent 60%);"></div>
+    <img src="brand_assets/IMG_0468.png" alt="" aria-hidden="true" loading="lazy" class="pointer-events-none select-none absolute right-0 top-0 w-80 opacity-[0.07]" />
+
+    <div class="relative z-10 max-w-7xl mx-auto px-6 lg:px-8">
+      <div class="grid lg:grid-cols-2 gap-16 items-center">
+        <!-- Left: Info -->
+        <div class="order-2 lg:order-1">
+          <div class="space-y-6">
+            <!-- Item -->
+            <div class="flex gap-4 group">
+              <div class="flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center mt-0.5 border border-azure-300/50 bg-white group-hover:border-azure-400 transition-colors duration-200">
+                <svg width="18" height="18" fill="none" stroke="#1e6678" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+              </div>
+              <div>
+                <h4 class="font-semibold text-azure-900 text-sm mb-1">Formulary & Prescribing Information</h4>
+                <p class="text-azure-600 text-sm leading-relaxed">Access complete prescribing information, clinical trial summaries, and dosing protocols for every drug in our portfolio. We equip your clinical team with everything they need.</p>
+              </div>
+            </div>
+
+            <div class="flex gap-4 group">
+              <div class="flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center mt-0.5 border border-azure-300/50 bg-white group-hover:border-azure-400 transition-colors duration-200">
+                <svg width="18" height="18" fill="none" stroke="#1e6678" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+              </div>
+              <div>
+                <h4 class="font-semibold text-azure-900 text-sm mb-1">Bulk Ordering & Institutional Supply</h4>
+                <p class="text-azure-600 text-sm leading-relaxed">We support hospitals, specialist centres, and pharmacy chains with bulk procurement, competitive institutional pricing, and reliable replenishment schedules.</p>
+              </div>
+            </div>
+
+            <div class="flex gap-4 group">
+              <div class="flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center mt-0.5 border border-azure-300/50 bg-white group-hover:border-azure-400 transition-colors duration-200">
+                <svg width="18" height="18" fill="none" stroke="#1e6678" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+              </div>
+              <div>
+                <h4 class="font-semibold text-azure-900 text-sm mb-1">Dedicated Medical Affairs Support</h4>
+                <p class="text-azure-600 text-sm leading-relaxed">Our team includes qualified pharmacists and medical affairs professionals available for consultations, availability checks, and clinical support inquiries.</p>
+              </div>
+            </div>
+
+            <div class="flex gap-4 group">
+              <div class="flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center mt-0.5 border border-azure-300/50 bg-white group-hover:border-azure-400 transition-colors duration-200">
+                <svg width="18" height="18" fill="none" stroke="#1e6678" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+              </div>
+              <div>
+                <h4 class="font-semibold text-azure-900 text-sm mb-1">Authenticity & Quality Guarantee</h4>
+                <p class="text-azure-600 text-sm leading-relaxed">All products are sourced directly from licensed manufacturers or authorised distributors. Certificates of Analysis and batch documentation provided upon request.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-10">
+            <a href="#contact" class="btn-primary inline-flex items-center gap-2 px-6 py-3.5 rounded-xl text-white font-semibold text-sm">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+              Partner With VIREON
+            </a>
+          </div>
+        </div>
+
+        <!-- Right: Heading -->
+        <div class="order-1 lg:order-2">
+          <span class="text-xs font-semibold tracking-widest uppercase text-azure-500 mb-3 block">Professional Services</span>
+          <h2 class="font-display text-2xl sm:text-3xl lg:text-5xl font-bold text-azure-900 mb-6" style="letter-spacing:-0.02em; line-height:1.15;">For Healthcare Providers</h2>
+          <p class="text-azure-700 text-lg leading-relaxed mb-6" style="line-height:1.75;">Whether you are a consultant physician, hospital procurement officer, or clinical pharmacist, VIREON provides the supply chain infrastructure, documentation, and support your institution needs to access novel medications reliably.</p>
+
+          <!-- Provider quick-stats -->
+          <div class="grid grid-cols-3 sm:grid-cols-3 gap-3 mt-8">
+            <div class="text-center p-4 rounded-xl border border-azure-200 bg-white shadow-sm">
+              <p class="font-display text-2xl font-bold text-azure-900">48h</p>
+              <p class="text-azure-500 text-xs mt-1">Quote turnaround</p>
+            </div>
+            <div class="text-center p-4 rounded-xl border border-azure-200 bg-white shadow-sm">
+              <p class="font-display text-2xl font-bold text-azure-900">Novel</p>
+              <p class="text-azure-500 text-xs mt-1">Therapies only</p>
+            </div>
+            <div class="text-center p-4 rounded-xl border border-azure-200 bg-white shadow-sm">
+              <p class="font-display text-2xl font-bold text-azure-900">Direct</p>
+              <p class="text-azure-500 text-xs mt-1">Manufacturer sourcing</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="section-divider" />
+
+  <!-- ===================== PATIENT RESOURCES ===================== -->
+  <section id="patients" class="py-24 bg-white relative overflow-hidden">
+    <img src="brand_assets/IMG_0468.png" alt="" aria-hidden="true" loading="lazy" class="pointer-events-none select-none absolute left-0 top-1/2 -translate-y-1/2 w-72 opacity-[0.07]" />
+    <div class="relative z-10 max-w-7xl mx-auto px-6 lg:px-8">
+      <div class="text-center mb-14">
+        <span class="text-xs font-semibold tracking-widest uppercase text-azure-500 mb-3 block">Patient Guidance</span>
+        <h2 class="font-display text-2xl sm:text-3xl lg:text-5xl font-bold text-azure-900 mb-4" style="letter-spacing:-0.02em;">Patient Resources</h2>
+        <p class="text-azure-700 text-lg max-w-2xl mx-auto" style="line-height:1.75;">We know navigating access to novel medications can feel overwhelming. Here's what you need to know.</p>
+      </div>
+
+      <!-- FAQs -->
+      <div class="max-w-3xl mx-auto space-y-3" id="faqs">
+
+        <div class="accordion-item border border-azure-200 rounded-xl overflow-hidden bg-white shadow-sm">
+          <button class="accordion-trigger w-full flex items-center justify-between px-6 py-5 text-left hover:bg-azure-50 transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-azure-400">
+            <span class="font-semibold text-azure-900 text-sm pr-4">How do I access a drug listed in your catalogue?</span>
+            <span class="accordion-icon flex-shrink-0 text-azure-400 text-xl font-light">+</span>
+          </button>
+          <div class="accordion-content">
+            <div class="px-6 pb-5 text-azure-700 text-sm leading-relaxed" style="line-height:1.75;">
+              VIREON supplies directly to licensed healthcare providers, hospitals, specialist clinics, and registered pharmacies. If you are a patient, the best path is through your doctor or specialist who can raise an inquiry on your behalf. You can also contact us directly via the form below and we'll guide you to the appropriate provider in your area.
+            </div>
+          </div>
+        </div>
+
+        <div class="accordion-item border border-azure-200 rounded-xl overflow-hidden bg-white shadow-sm">
+          <button class="accordion-trigger w-full flex items-center justify-between px-6 py-5 text-left hover:bg-azure-50 transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-azure-400">
+            <span class="font-semibold text-azure-900 text-sm pr-4">Are the drugs in your catalogue affordable?</span>
+            <span class="accordion-icon flex-shrink-0 text-azure-400 text-xl font-light">+</span>
+          </button>
+          <div class="accordion-content">
+            <div class="px-6 pb-5 text-azure-700 text-sm leading-relaxed" style="line-height:1.75;">
+              Affordability is central to our mission. We work with manufacturers and institutional buyers to negotiate the most competitive pricing possible for the African market. For patients on novel or rare disease therapies, we also maintain information about available Patient Access Programmes and compassionate use options where they exist.
+            </div>
+          </div>
+        </div>
+
+        <div class="accordion-item border border-azure-200 rounded-xl overflow-hidden bg-white shadow-sm">
+          <button class="accordion-trigger w-full flex items-center justify-between px-6 py-5 text-left hover:bg-azure-50 transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-azure-400">
+            <span class="font-semibold text-azure-900 text-sm pr-4">How do I know the drugs are genuine?</span>
+            <span class="accordion-icon flex-shrink-0 text-azure-400 text-xl font-light">+</span>
+          </button>
+          <div class="accordion-content">
+            <div class="px-6 pb-5 text-azure-700 text-sm leading-relaxed" style="line-height:1.75;">
+              Every product we handle is sourced exclusively from licensed manufacturers or authorised distributors. We do not deal in grey-market or parallel imports, full stop. Documentation and batch information are provided on request for every therapy we supply.
+            </div>
+          </div>
+        </div>
+
+        <div class="accordion-item border border-azure-200 rounded-xl overflow-hidden bg-white shadow-sm">
+          <button class="accordion-trigger w-full flex items-center justify-between px-6 py-5 text-left hover:bg-azure-50 transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-azure-400">
+            <span class="font-semibold text-azure-900 text-sm pr-4">What conditions do the drugs in your catalogue treat?</span>
+            <span class="accordion-icon flex-shrink-0 text-azure-400 text-xl font-light">+</span>
+          </button>
+          <div class="accordion-content">
+            <div class="px-6 pb-5 text-azure-700 text-sm leading-relaxed" style="line-height:1.75;">
+              Our portfolio spans multiple therapeutic areas, including Type 2 Diabetes, Obesity, Sickle Cell Disease, HIV/AIDS, Oncology, Cardiology, and Rare Diseases. We specifically focus on novel and niche treatments that are not commonly available in the African market, giving patients access to therapies previously only available abroad.
+            </div>
+          </div>
+        </div>
+
+        <div class="accordion-item border border-azure-200 rounded-xl overflow-hidden bg-white shadow-sm">
+          <button class="accordion-trigger w-full flex items-center justify-between px-6 py-5 text-left hover:bg-azure-50 transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-azure-400">
+            <span class="font-semibold text-azure-900 text-sm pr-4">Can I contact VIREON directly as a patient?</span>
+            <span class="accordion-icon flex-shrink-0 text-azure-400 text-xl font-light">+</span>
+          </button>
+          <div class="accordion-content">
+            <div class="px-6 pb-5 text-azure-700 text-sm leading-relaxed" style="line-height:1.75;">
+              Absolutely. While our supply chain operates through healthcare providers, we welcome direct enquiries from patients and their families. Use the contact form below or reach us via email at <a href="mailto:info@vireonhealthcare.com" class="text-azure-500 hover:text-azure-700 transition-colors">info@vireonhealthcare.com</a>. We'll direct you to the right resources or the nearest participating provider.
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <hr class="section-divider" />
+
+  <!-- ===================== CONTACT ===================== -->
+  <section id="contact" class="py-24 bg-azure-50 relative overflow-hidden">
+    <div class="absolute inset-0 pointer-events-none" style="background: radial-gradient(ellipse 70% 60% at 80% 30%, rgba(42,143,168,0.07) 0%, transparent 60%);"></div>
+    <img src="brand_assets/IMG_0468.png" alt="" aria-hidden="true" loading="lazy" class="pointer-events-none select-none absolute right-0 bottom-0 w-80 opacity-[0.07]" />
+
+    <div class="relative z-10 max-w-7xl mx-auto px-6 lg:px-8">
+      <div class="grid lg:grid-cols-2 gap-16">
+        <!-- Left: Contact info -->
+        <div>
+          <span class="text-xs font-semibold tracking-widest uppercase text-azure-500 mb-3 block">Get In Touch</span>
+          <h2 class="font-display text-2xl sm:text-3xl lg:text-5xl font-bold text-azure-900 mb-6" style="letter-spacing:-0.02em; line-height:1.15;">Contact &amp; Inquiry</h2>
+          <p class="text-azure-700 text-lg leading-relaxed mb-10" style="line-height:1.75;">Whether you're a healthcare provider seeking a quote, a patient searching for a treatment, or an organisation interested in partnership, we'd love to hear from you.</p>
+
+          <!-- Contact details -->
+          <div class="space-y-5 mb-10">
+            <div class="flex items-center gap-4">
+              <div class="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 border border-azure-200 bg-white shadow-sm">
+                <svg width="18" height="18" fill="none" stroke="#5bb5cc" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+              </div>
+              <div>
+                <p class="text-azure-500 text-xs font-semibold uppercase tracking-wider mb-0.5">Email</p>
+                <a href="mailto:info@vireonhealthcare.com" class="text-azure-800 font-medium hover:text-azure-600 transition-colors duration-200">info@vireonhealthcare.com</a>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-4">
+              <div class="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 border border-azure-200 bg-white shadow-sm">
+                <svg width="18" height="18" fill="none" stroke="#5bb5cc" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+              </div>
+              <div>
+                <p class="text-azure-500 text-xs font-semibold uppercase tracking-wider mb-0.5">Phone</p>
+                <a href="tel:+2348087505481" class="text-azure-800 font-medium hover:text-azure-600 transition-colors duration-200">+234 808 750 5481</a>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-4">
+              <div class="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 border border-azure-200 bg-white shadow-sm">
+                <svg width="18" height="18" fill="none" stroke="#5bb5cc" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+              </div>
+              <div>
+                <p class="text-azure-500 text-xs font-semibold uppercase tracking-wider mb-0.5">Base of Operations</p>
+                <p class="text-azure-800 font-medium">Nigeria, Pan-African Distribution</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick actions -->
+          <div class="grid grid-cols-2 gap-3">
+            <a href="#drugs" class="flex items-center gap-2 p-3 rounded-xl border border-azure-200 bg-white hover:bg-azure-50 transition-colors duration-200 text-sm text-azure-700 hover:text-azure-900 font-medium">
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path stroke-linecap="round" d="M21 21l-4.35-4.35"/></svg>
+              View Our Portfolio
+            </a>
+            <a href="#about" class="flex items-center gap-2 p-3 rounded-xl border border-azure-200 bg-white hover:bg-azure-50 transition-colors duration-200 text-sm text-azure-700 hover:text-azure-900 font-medium">
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              About VIREON
+            </a>
+            <a href="#providers" class="flex items-center gap-2 p-3 rounded-xl border border-azure-200 bg-white hover:bg-azure-50 transition-colors duration-200 text-sm text-azure-700 hover:text-azure-900 font-medium">
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+              For Providers
+            </a>
+            <a href="#patients" class="flex items-center gap-2 p-3 rounded-xl border border-azure-200 bg-white hover:bg-azure-50 transition-colors duration-200 text-sm text-azure-700 hover:text-azure-900 font-medium">
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+              Patient Resources
+            </a>
+          </div>
+        </div>
+
+        <!-- Right: Form -->
+        <div>
+          <div class="stat-card rounded-2xl p-8">
+            <h3 class="font-semibold text-azure-900 text-lg mb-6">Send an Inquiry</h3>
+            <form id="contact-form" class="space-y-4" onsubmit="handleSubmit(event)">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-xs font-semibold text-azure-600 uppercase tracking-wider mb-2">First Name</label>
+                  <input type="text" name="firstName" required placeholder="First name" class="form-input w-full bg-white border border-azure-200 text-azure-900 placeholder-azure-400 text-sm rounded-xl px-4 py-3 transition-all duration-200" />
+                </div>
+                <div>
+                  <label class="block text-xs font-semibold text-azure-600 uppercase tracking-wider mb-2">Last Name</label>
+                  <input type="text" name="lastName" required placeholder="Last name" class="form-input w-full bg-white border border-azure-200 text-azure-900 placeholder-azure-400 text-sm rounded-xl px-4 py-3 transition-all duration-200" />
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-azure-300 uppercase tracking-wider mb-2">Email Address</label>
+                <input type="email" name="email" required placeholder="you@example.com" class="form-input w-full bg-white border border-azure-200 text-azure-900 placeholder-azure-400 text-sm rounded-xl px-4 py-3 transition-all duration-200" />
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-azure-300 uppercase tracking-wider mb-2">Phone Number</label>
+                <input type="tel" name="phone" placeholder="+234..." class="form-input w-full bg-white border border-azure-200 text-azure-900 placeholder-azure-400 text-sm rounded-xl px-4 py-3 transition-all duration-200" />
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-azure-300 uppercase tracking-wider mb-2">I am a</label>
+                <select name="role" class="form-input w-full bg-white border border-azure-200 text-azure-900 text-sm rounded-xl px-4 py-3 transition-all duration-200 appearance-none">
+                  <option value="">Select your role</option>
+                  <option value="physician">Physician / Specialist</option>
+                  <option value="pharmacist">Pharmacist</option>
+                  <option value="hospital">Hospital / Institution</option>
+                  <option value="patient">Patient / Caregiver</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-azure-300 uppercase tracking-wider mb-2">Message</label>
+                <textarea name="message" required rows="4" placeholder="Tell us what you're looking for, a specific drug, pricing inquiry, partnership opportunity, or general question..." class="form-input w-full bg-white border border-azure-200 text-azure-900 placeholder-azure-400 text-sm rounded-xl px-4 py-3 transition-all duration-200 resize-none"></textarea>
+              </div>
+
+              <button type="submit" class="btn-primary w-full py-3.5 rounded-xl text-white font-semibold text-sm flex items-center justify-center gap-2">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+                Send Inquiry
+              </button>
+
+              <div id="form-success" class="hidden bg-emerald-50 border border-emerald-200 rounded-xl p-4 text-emerald-700 text-sm text-center">
+                Thank you! We'll be in touch within 48 hours.
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer class="border-t border-azure-700/30 bg-azure-950 py-12 relative overflow-hidden">
+    <img src="brand_assets/IMG_0468.png" alt="" aria-hidden="true" loading="lazy" class="pointer-events-none select-none absolute right-1/2 translate-x-1/2 top-1/2 -translate-y-1/2 w-64 opacity-[0.04]" />
+    <div class="relative z-10 max-w-7xl mx-auto px-6 lg:px-8">
+      <div class="grid md:grid-cols-4 gap-10 mb-10">
+        <!-- Brand -->
+        <div class="md:col-span-2">
+          <img src="brand_assets/IMG_0455.png" alt="VIREON Healthcare Limited" class="h-10 w-auto mb-4" />
+          <p class="text-azure-200 text-sm leading-relaxed max-w-sm" style="line-height:1.75;">Advancing Health, Delivering Trust. Importing and distributing breakthrough pharmaceutical therapies across Africa.</p>
+          <div class="mt-5 flex gap-3">
+            <a href="mailto:info@vireonhealthcare.com" class="w-9 h-9 rounded-lg border border-azure-600/30 bg-azure-800/40 flex items-center justify-center text-azure-300 hover:text-white hover:border-azure-400/60 transition-all duration-200" aria-label="Email">
+              <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+            </a>
+            <a href="tel:+2348087505481" class="w-9 h-9 rounded-lg border border-azure-600/30 bg-azure-800/40 flex items-center justify-center text-azure-300 hover:text-white hover:border-azure-400/60 transition-all duration-200" aria-label="Phone">
+              <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <!-- Quick Links -->
+        <div>
+          <h5 class="text-xs font-semibold uppercase tracking-widest text-azure-300 mb-4">Navigation</h5>
+          <ul class="space-y-2.5">
+            <li><a href="#drugs" class="text-azure-200 hover:text-white text-sm transition-colors duration-200">Our Portfolio</a></li>
+            <li><a href="#about" class="text-azure-200 hover:text-white text-sm transition-colors duration-200">About Us</a></li>
+            <li><a href="#providers" class="text-azure-200 hover:text-white text-sm transition-colors duration-200">For Healthcare Providers</a></li>
+            <li><a href="#patients" class="text-azure-200 hover:text-white text-sm transition-colors duration-200">Patient Resources</a></li>
+            <li><a href="#contact" class="text-azure-200 hover:text-white text-sm transition-colors duration-200">Contact & Inquiry</a></li>
+          </ul>
+        </div>
+
+        <!-- Contact -->
+        <div>
+          <h5 class="text-xs font-semibold uppercase tracking-widest text-azure-300 mb-4">Contact</h5>
+          <ul class="space-y-2.5">
+            <li>
+              <a href="mailto:info@vireonhealthcare.com" class="text-azure-200 hover:text-white text-sm transition-colors duration-200 break-all">info@vireonhealthcare.com</a>
+            </li>
+            <li>
+              <a href="tel:+2348087505481" class="text-azure-200 hover:text-white text-sm transition-colors duration-200">+234 808 750 5481</a>
+            </li>
+            <li class="text-azure-200 text-sm">Nigeria, Pan-African</li>
+          </ul>
+
+          <div class="mt-6">
+            <p class="text-xs font-semibold uppercase tracking-wider text-azure-300 mb-2">Response Time</p>
+            <p class="text-azure-200 text-sm">Within 48 business hours</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="border-t border-azure-700/30 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <p class="text-azure-400 text-xs">© 2026 VIREON Healthcare Limited. All rights reserved.</p>
+        <p class="text-azure-500 text-xs">Novel &amp; Niche Pharmaceutical Importer &amp; Distributor, Nigeria</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+
+    // ?y=N shifts viewport for headless screenshots
+    (function(){ const y=new URLSearchParams(location.search).get('y'); if(y) document.body.style.marginTop=`-${y}px`; })();
+
+    // ---- Navbar scroll effect ----
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 30) {
+        navbar.style.background = 'rgba(255,255,255,0.97)';
+        navbar.style.backdropFilter = 'blur(12px)';
+        navbar.style.borderBottom = '1px solid rgba(42,143,168,0.15)';
+        navbar.style.boxShadow = '0 1px 16px rgba(6,17,33,0.06)';
+      } else {
+        navbar.style.background = 'transparent';
+        navbar.style.backdropFilter = 'none';
+        navbar.style.borderBottom = 'none';
+        navbar.style.boxShadow = 'none';
+      }
+    }, { passive: true });
+
+    // ---- Mobile menu ----
+    const burger = document.getElementById('burger');
+    const mobileMenu = document.getElementById('mobile-menu');
+    burger.addEventListener('click', () => {
+      const isOpen = !mobileMenu.classList.contains('hidden');
+      if (isOpen) {
+        mobileMenu.classList.add('hidden');
+      } else {
+        mobileMenu.classList.remove('hidden');
+      }
+    });
+    // Close on nav link click
+    mobileMenu.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => mobileMenu.classList.add('hidden'));
+    });
+
+    // ---- FAQ Accordion ----
+    document.querySelectorAll('.accordion-trigger').forEach(trigger => {
+      trigger.addEventListener('click', () => {
+        const item = trigger.closest('.accordion-item');
+        const content = item.querySelector('.accordion-content');
+        const icon = trigger.querySelector('.accordion-icon');
+        const isOpen = content.classList.contains('open');
+
+        // Close all
+        document.querySelectorAll('.accordion-content.open').forEach(c => {
+          c.classList.remove('open');
+          c.closest('.accordion-item').querySelector('.accordion-icon').classList.remove('open');
+        });
+
+        if (!isOpen) {
+          content.classList.add('open');
+          icon.classList.add('open');
+        }
+      });
+    });
+
+    // ---- Form submit → Google Sheets ----
+    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby3vu6vQYOLTQe0-dcyMYn6EOdt0zxm0rr4eidf3DJYdIu4WxioTjjd3AKMH5vMbbwGBA/exec';
+
+    function handleSubmit(e) {
+      e.preventDefault();
+      const form = e.target;
+      const btn = form.querySelector('button[type="submit"]');
+      const successEl = document.getElementById('form-success');
+      btn.disabled = true;
+      btn.innerHTML = '<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" class="animate-spin"><path stroke-linecap="round" stroke-linejoin="round" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg> Sending...';
+
+      const data = {
+        firstName: form.firstName.value,
+        lastName:  form.lastName.value,
+        email:     form.email.value,
+        phone:     form.phone.value,
+        role:      form.role.value,
+        message:   form.message.value
+      };
+
+      fetch(GOOGLE_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      })
+      .then(() => {
+        successEl.classList.remove('hidden');
+        btn.style.display = 'none';
+        form.reset();
+      })
+      .catch(() => {
+        btn.disabled = false;
+        btn.innerHTML = 'Send Inquiry';
+        successEl.classList.remove('hidden');
+        successEl.textContent = 'Something went wrong. Please email us at info@vireonhealthcare.com';
+        successEl.classList.replace('bg-emerald-50', 'bg-red-50');
+        successEl.classList.replace('border-emerald-200', 'border-red-200');
+        successEl.classList.replace('text-emerald-700', 'text-red-700');
+      });
+    }
+
+    // Subtle entrance animations via CSS, stagger cards as they scroll into view
+    (function() {
+      const targets = document.querySelectorAll('.stat-card, .accordion-item');
+      targets.forEach((el, i) => {
+        el.style.cssText += `opacity:1;transform:translateY(0);`;
+      });
+    })();
+  </script>
+</body>
+</html>
